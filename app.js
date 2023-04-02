@@ -49,6 +49,26 @@ app.get('/todos/:id', (req, res) => {
     .then((todo) => res.render('detail', { todo }))//把資料傳給前端樣板
     .catch(error => console.log(error))
 })
+//瀏覽todo修改頁面
+app.get('/todos/:id/edit', (req, res) => {
+  const id = req.params.id
+  return Todo.findById(id)
+    .lean()
+    .then((todo) => res.render('edit', { todo }))
+    .catch(error => console.log(error))
+})
+//將修改後的todo傳入資料庫
+app.post('/todos/:id/edit', (req, res) => {
+  const id = req.params.id
+  const name = req.body.name
+  return Todo.findById(id)
+    .then(todo => {
+      todo.name = name
+      return todo.save()
+    })
+    .then(()=> res.redirect(`/todos/${id}`))
+    .catch(error => console.log(error))
+})
 app.listen(3000,()=>{
   console.log('App is listening on localhost:3000')
 })
