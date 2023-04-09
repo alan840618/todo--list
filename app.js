@@ -2,6 +2,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
+const methodOverride = require('method-override')
 const Todo = require('./models/todo')
 //資料庫連線設定
 // 加入這段 code, 僅在非正式環境時, 使用 dotenv
@@ -20,9 +21,10 @@ db.once('open',()=>{
 //設定樣板引擎
 app.engine('hbs',exphbs({defaultLayout:'main',extname:'.hbs'}))
 app.set('view engine','hbs')
-//設定body-parser
+//設定body-parser，負責解析req.body
 app.use(bodyParser.urlencoded({ extended: true }))
 //路由設定
+app.use(methodOverride('_method'))
 app.get('/',(req,res)=>{
   Todo.find()//取出 Todo model 裡的所有資料
       .lean()// 把 Mongoose 的 Model 物件轉換成乾淨的 JavaScript 資料陣列
@@ -59,7 +61,7 @@ app.get('/todos/:id/edit', (req, res) => {
     .catch(error => console.log(error))
 })
 //將修改後的todo傳入資料庫
-app.post('/todos/:id/edit', (req, res) => {
+app.put('/todos/:id', (req, res) => {
   const id = req.params.id
   const { name, isDone } = req.body
   return Todo.findById(id)
@@ -71,7 +73,7 @@ app.post('/todos/:id/edit', (req, res) => {
     .then(() => res.redirect(`/todos/${id}`))
     .catch(error => console.log(error))
 })
-app.post('/todos/:id/delete', (req, res) => {
+app.delete('/todos/:id', (req, res) => {
   const id = req.params.id
   return Todo.findById(id)
     .then(todo => todo.deleteOne())
