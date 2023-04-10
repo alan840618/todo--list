@@ -4,6 +4,7 @@ const bodyParser = require('body-parser')
 const methodOverride = require('method-override')
 const routes = require('./routes')
 const app = express()
+const PORT = process.env.PORT || 3000
 require('./config/mongoose')
 
 //設定樣板引擎
@@ -14,6 +15,6 @@ app.use(bodyParser.urlencoded({ extended: true }))
 //路由設定
 app.use(methodOverride('_method'))
 app.use(routes)
-app.listen(3000,()=>{
-  console.log('App is listening on localhost:3000')
+app.listen(PORT,()=>{
+  console.log(`App is listening on http://localhost:${PORT}`)
 })
