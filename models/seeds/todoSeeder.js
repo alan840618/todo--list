@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const Todo = require('../todo')
 const db = require('../../config/mongoose')
 
 db.once('open',()=>{
